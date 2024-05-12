@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUI</title>
+    <style>
+        .container {
+            margin: 20px;
+            width: 500px;
+        }
+        
+        .item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: solid 1px black;
+        }
+        
+        .textbox {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .textbox-container {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .textbox-container textarea {
+            flex: 1;
+            margin-right: 10px;
+            height: 500px;
+        }
+        
+        .button {
+            margin-right: 5px;
+        }
+        
+        .fixed-element {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="fixed-element">
+        <button onclick="addItemTop()">一番上に項目を追加</button>
+        <button onclick="outputData()">出力</button>
+        <button onclick="saveData()">データを保存</button>
+
+    </div>
+
+    <div id="container" class="container"></div>
+    <script src="array.js"></script>
+    <script>
+        // container要素を取得
+        var container = document.getElementById("container");
+
+        // 各項目ごとに処理
+        function renderItems() {
+            container.innerHTML = ""; // containerをクリア
+
+            Object.keys(x).forEach(function(key) {
+                var item = createItem(key, x[key]);
+                container.appendChild(item);
+            });
+        }
+
+        function createItem(key, itemData) {
+            var itemDiv = document.createElement("div");
+            itemDiv.classList.add("item");
+
+            var itemNameInput = document.createElement("input");
+            itemNameInput.classList.add("textbox");
+            itemNameInput.type = "text";
+            itemNameInput.value = key;
+            itemDiv.appendChild(itemNameInput);
+
+            var textBoxContainer = document.createElement("div");
+            textBoxContainer.classList.add("textbox-container");
+            var keyTextBox = document.createElement("textarea");
+            keyTextBox.classList.add("textbox");
+            keyTextBox.placeholder = "keyを追加";
+            keyTextBox.value = Object.keys(itemData).join("\n");
+            textBoxContainer.appendChild(keyTextBox);
+
+            var valueTextBox = document.createElement("textarea");
+            valueTextBox.classList.add("textbox");
+            valueTextBox.placeholder = "valueを追加";
+            valueTextBox.value = Object.values(itemData).join("\n");
+            textBoxContainer.appendChild(valueTextBox);
+
+            itemDiv.appendChild(textBoxContainer);
+
+            for (var j = 1; j <= 3; j++) {
+                var button = document.createElement("button");
+                button.classList.add("button");
+                switch (j) {
+                    case 1:
+                        button.textContent = "この項目の削除";
+                        button.onclick = function() {
+                            deleteItem(itemDiv);
+                        };
+                        break;
+                    case 2:
+                        button.textContent = "下に項目の追加";
+                        button.onclick = function() {
+                            addItemBelow(itemDiv);
+                        };
+                        break;
+                    case 3:
+                        button.textContent = "未定";
+                        break;
+                    default:
+                        break;
+                }
+                itemDiv.appendChild(button);
+            }
+
+            return itemDiv;
+        }
+
+        function addItemTop() {
+            var newItemDiv = createItem("", {});
+            container.insertBefore(newItemDiv, container.firstChild);
+        }
+
+        // データを出力する関数
+        function outputData() {
+            var output = {};
+
+            var items = document.querySelectorAll(".item");
+            items.forEach(function(item) {
+                var itemName = item.querySelector("input[type='text']").value;
+                var keyText = item.querySelector("textarea:nth-of-type(1)").value.trim().split("\n");
+                var valueText = item.querySelector("textarea:nth-of-type(2)").value.trim().split("\n");
+                var itemData = {};
+
+                for (var i = 0; i < Math.min(keyText.length, valueText.length); i++) {
+                    itemData[keyText[i]] = valueText[i];
+                }
+
+                output[itemName] = itemData;
+            });
+
+            console.log(JSON.stringify(output, null, 2));
+        }
+
+        // データを保存する関数
+        function saveData() {
+            var output = {};
+
+            var items = document.querySelectorAll(".item");
+            items.forEach(function(item) {
+                var itemName = item.querySelector("input[type='text']").value;
+                var keyText = item.querySelector("textarea:nth-of-type(1)").value.trim().split("\n");
+                var valueText = item.querySelector("textarea:nth-of-type(2)").value.trim().split("\n");
+                var itemData = {};
+
+                for (var i = 0; i < Math.min(keyText.length, valueText.length); i++) {
+                    itemData[keyText[i]] = valueText[i];
+                }
+
+                output[itemName] = itemData;
+            });
+
+            var dataScript = "var x = " + JSON.stringify(output, null, 2) + ";";
+            var blob = new Blob([dataScript], {
+                type: "text/javascript"
+            });
+            var url = URL.createObjectURL(blob);
+
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "array.js";
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function deleteItem(parentDiv) {
+            parentDiv.remove();
+        }
+
+        function addItemBelow(parentDiv) {
+            var newItemDiv = createItem("", {});
+            parentDiv.parentNode.insertBefore(newItemDiv, parentDiv.nextSibling);
+        }
+
+        renderItems(); // 初回レンダリング
+    </script>
+
+</body>
+
+</html>
