@@ -8,7 +8,7 @@
     <style>
         .container {
             margin: 20px;
-            width: 500px;
+            width: 70%;
         }
         
         .item {
@@ -20,6 +20,7 @@
         .textbox {
             display: block;
             margin-bottom: 5px;
+            width: 30%;
         }
         
         .textbox-container {
@@ -35,6 +36,7 @@
         
         .button {
             margin-right: 5px;
+            font-weight: 700;
         }
         
         .fixed-element {
@@ -76,6 +78,7 @@
             var itemNameInput = document.createElement("input");
             itemNameInput.classList.add("textbox");
             itemNameInput.type = "text";
+            itemNameInput.placeholder = "項目の名前";
             itemNameInput.value = key;
             itemDiv.appendChild(itemNameInput);
 
@@ -83,13 +86,13 @@
             textBoxContainer.classList.add("textbox-container");
             var keyTextBox = document.createElement("textarea");
             keyTextBox.classList.add("textbox");
-            keyTextBox.placeholder = "keyを追加";
+            keyTextBox.placeholder = "keyを追加(日本語)";
             keyTextBox.value = Object.keys(itemData).join("\n");
             textBoxContainer.appendChild(keyTextBox);
 
             var valueTextBox = document.createElement("textarea");
             valueTextBox.classList.add("textbox");
-            valueTextBox.placeholder = "valueを追加";
+            valueTextBox.placeholder = "valueを追加(英語)";
             valueTextBox.value = Object.values(itemData).join("\n");
             textBoxContainer.appendChild(valueTextBox);
 
